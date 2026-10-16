@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#12334d">
+<title>Metalfund | Controle de Ordens de Serviço</title>
+<style>
+:root{--navy:#12334d;--blue:#1b5a87;--bg:#f2f5f8;--ink:#233547;--muted:#718096;--line:#dce4ec;--white:#fff;--green:#168653;--orange:#c97615;--red:#c53030;--purple:#7653bb;--teal:#087e8b;--shadow:0 5px 18px rgba(25,45,65,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8ec5f2;outline-offset:2px}
+.topbar{background:linear-gradient(110deg,#102b40,#1c5b86);color:#fff;padding:17px 26px;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 4px 14px #102b4026}.brand{display:flex;align-items:center;gap:13px}.brand-mark{width:48px;height:48px;border-radius:11px;background:#f0aa2e;color:#162f43;display:grid;place-items:center;font-weight:900;font-size:29px;font-style:italic}.brand h1{font-size:24px;letter-spacing:2px;margin:0}.brand p{margin:4px 0 0;font-size:10px;letter-spacing:1.5px;color:#d6e6f2}.top-right{display:flex;align-items:center;gap:9px;color:#e1edf6;font-size:12px}.live-dot{width:9px;height:9px;background:#4cda91;border-radius:50%;box-shadow:0 0 0 4px #4cda9128}.wrap{max-width:1800px;margin:auto;padding:26px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:22px}.heading h2{font-size:25px;color:#18364e;margin:0 0 5px}.heading p,.sub{color:var(--muted);margin:0;font-size:13px}.btn{border:1px solid transparent;border-radius:8px;padding:10px 15px;min-height:40px;font-weight:700;transition:.15s}.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#123f62}.btn-light{background:#f8fafc;color:#34495e;border-color:#d5dfe8}.btn-light:hover{background:#eaf1f7}.btn-danger{background:#fff5f5;color:#b42318;border-color:#fecaca}.btn-small{min-height:30px;padding:6px 9px;font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:22px}.metric{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:19px;display:flex;gap:14px;align-items:center;min-height:112px}.metric-icon{height:47px;width:47px;display:grid;place-items:center;border-radius:12px;font-size:23px;flex-shrink:0}.mi-blue{background:#dbeafe;color:#1d4ed8}.mi-orange{background:#ffedd5;color:#a9570b}.mi-purple{background:#ede9fe;color:#6d28d9}.mi-green{background:#dcfce7;color:#166534}.metric-label{color:var(--muted);font-size:12px;font-weight:650}.metric strong{display:block;font-size:29px;line-height:1.2;margin:4px 0;color:#18364e}.metric small{color:#8a97a5;font-size:11px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:21px;margin-bottom:22px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}.panel h3{margin:0 0 5px;font-size:17px;color:#20394f}.tag{font-size:10px;font-weight:800;letter-spacing:.7px;background:#eaf2fa;color:#245784;padding:7px 10px;border-radius:6px}
+#formPanel{display:none;border-top:4px solid var(--blue)}#formPanel.open{display:block;animation:fade .2s ease}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label{font-size:12px;font-weight:700;color:#35485a}.field input,.field select,.field textarea,.filters input,.filters select{width:100%;border:1px solid #d6dee8;border-radius:7px;padding:10px 11px;min-height:41px;background:#fff;color:#293d50}.field textarea{resize:vertical;min-height:78px}.field input:focus,.field select:focus,.field textarea:focus,.filters input:focus,.filters select:focus{outline:none;border-color:#3182ce;box-shadow:0 0 0 3px #3182ce19}.span-all{grid-column:1/-1}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:19px;padding-top:16px;border-top:1px solid #edf0f4}
+.filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(140px,1fr) auto;gap:13px;align-items:end}.filter-field{display:flex;flex-direction:column;gap:6px}.filter-field label{font-size:12px;font-weight:700;color:#465a6e}
+.kanban-scroll{overflow-x:auto;padding-bottom:9px}.kanban{display:grid;grid-template-columns:repeat(7,minmax(220px,1fr));gap:11px;min-width:1580px}.lane{background:#f6f8fb;border:1px solid #e0e7ef;border-radius:10px;padding:9px;min-height:270px}.lane-head{display:flex;justify-content:space-between;align-items:center;gap:6px;border-radius:7px;padding:10px 9px;font-weight:800;font-size:11px;line-height:1.4;margin-bottom:10px}.lane-head b{display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;background:#ffffffd9;border-radius:6px}.lane[data-stage="Recebimento"] .lane-head{background:#dbeafe;color:#1d4ed8}.lane[data-stage="Avaliacao"] .lane-head{background:#ede9fe;color:#6d28d9}.lane[data-stage="Aguardando"] .lane-head{background:#ffedd5;color:#9a4c08}.lane[data-stage="Recuperacao"] .lane-head{background:#fef3c7;color:#92400e}.lane[data-stage="Inspecao"] .lane-head{background:#cffafe;color:#0e7490}.lane[data-stage="Concluida"] .lane-head{background:#dcfce7;color:#166534}.lane[data-stage="Entregue"] .lane-head{background:#e2e8f0;color:#334155}.lane-cards{display:flex;flex-direction:column;gap:9px;min-height:190px}.empty{padding:23px 8px;color:#98a5b4;font-size:11px;text-align:center;border:1px dashed #d4dee8;border-radius:7px}
+.os-card{background:#fff;border:1px solid #dce4ed;border-left:4px solid #3182ce;border-radius:8px;padding:12px;box-shadow:0 2px 5px #14283c0a;overflow-wrap:anywhere}.os-card.priority-Alta{border-left-color:#e58a18}.os-card.priority-Urgente{border-left-color:#dc2626}.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:8px}.os-number{font-size:12px;font-weight:850;color:#174a78}.priority-badge{font-size:9px;font-weight:800;padding:4px 6px;border-radius:5px;white-space:nowrap}.priority-Normal{background:#dbeafe;color:#1d4ed8}.priority-Alta{background:#ffedd5;color:#9a3412}.priority-Urgente{background:#fee2e2;color:#b91c1c}.os-card h4{font-size:13px;margin:0 0 4px;color:#26384b}.client{font-size:11px;color:#7b8998;margin-bottom:10px}.card-info{display:grid;gap:5px;font-size:11px;color:#5a6b7d}.card-info strong{color:#344b60}.overdue{color:#b91c1c;background:#fee2e2;display:inline-block;padding:4px 6px;border-radius:4px;font-weight:800;font-size:9px}.card-actions{display:flex;gap:6px;margin-top:11px;padding-top:9px;border-top:1px solid #edf1f5}.card-actions button{flex:1;background:#f8fafc;border:1px solid #dce5ee;color:#34516c;border-radius:5px;padding:6px 5px;font-size:10px;font-weight:700}.card-actions button:hover{background:#e8f1fa}.card-actions .delete{flex:0 0 auto;color:#b91c1c;background:#fff7f7;border-color:#fecaca}.stage-move{margin-top:10px;display:grid;gap:5px}.stage-move label{font-size:10px;font-weight:700;color:#607184}.stage-move select{width:100%;min-height:34px;padding:6px;border:1px solid #d6dee8;border-radius:6px;background:#fff;font-size:11px;color:#34495e}
+.table-wrap{overflow-x:auto}.history-table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}.history-table th{padding:12px;background:#f3f6fa;color:#526477;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #dfe5ec}.history-table td{padding:12px;border-bottom:1px solid #edf0f4;color:#4a5c6f;font-size:12px}.history-table tr:hover td{background:#f8fbff}.empty-cell{text-align:center;color:#94a3b8!important;padding:28px!important;white-space:normal}.footer{display:flex;justify-content:space-between;gap:12px;color:#8794a3;font-size:11px;padding:0 2px 20px}.toast-area{position:fixed;right:20px;bottom:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:min(380px,calc(100vw - 32px))}.toast{padding:13px 16px;background:#176b46;color:#fff;border-radius:9px;box-shadow:0 8px 25px #0002;font-size:13px;animation:fade .2s ease}.toast.error{background:#b42318}.toast.warning{background:#a65d0a}.note{font-size:11px;color:#778799;margin-top:12px;line-height:1.5}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1100px){.wrap{padding:19px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.topbar{padding:15px;align-items:flex-start;flex-direction:column}.brand h1{font-size:22px}.top-right{flex-wrap:wrap}.wrap{padding:13px}.heading{align-items:stretch;flex-direction:column}.heading h2{font-size:21px}.heading .btn{width:100%}.metrics{grid-template-columns:1fr;gap:10px}.metric{min-height:91px;padding:15px}.panel{padding:15px;margin-bottom:15px}.panel-head{flex-direction:column}.form-grid,.filters{grid-template-columns:1fr}.span-all{grid-column:auto}.form-actions{flex-direction:column-reverse}.form-actions .btn{width:100%}.footer{flex-direction:column}.toast-area{right:12px;bottom:12px}}
+@media print{body{background:#fff}.topbar{background:#fff;color:#18364e;box-shadow:none;border-bottom:2px solid #18364e}.top-right,#formPanel,.filters,.heading button,.card-actions,.stage-move,.toast-area{display:none!important}.wrap{padding:8px;max-width:none}.metrics{grid-template-columns:repeat(4,1fr)}.panel,.metric{box-shadow:none;break-inside:avoid}.kanban-scroll{overflow:visible}.kanban{min-width:0;grid-template-columns:repeat(2,minmax(0,1fr))}.lane{break-inside:avoid}.footer{border-top:1px solid #ddd;margin-top:15px;padding-top:10px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">M</div><div><h1>METALFUND</h1><p>GESTÃO DE ORDENS DE SERVIÇO</p></div></div>
+  <div class="top-right"><span class="live-dot"></span><span>Painel de acompanhamento</span><span id="currentDate"></span></div>
+</header>
+
+<main class="wrap">
+  <section class="heading">
+    <div><h2>Controle de Recuperação de Peças</h2><p>Acompanhe cada ordem, do recebimento à entrega.</p></div>
+    <button class="btn btn-primary" id="newOrderBtn">＋ Nova Ordem de Serviço</button>
+  </section>
+
+  <section class="metrics">
+    <article class="metric"><div class="metric-icon mi-blue">📋</div><div><div class="metric-label">O.S. abertas</div><strong id="openCount">0</strong><small>Em andamento</small></div></article>
+    <article class="metric"><div class="metric-icon mi-orange">⚙️</div><div><div class="metric-label">Em recuperação</div><strong id="repairCount">0</strong><small>Peças em processamento</small></div></article>
+    <article class="metric"><div class="metric-icon mi-purple">🔍</div><div><div class="metric-label">Aguardando avaliação</div><strong id="evaluationCount">0</strong><small>Pendentes de análise</small></div></article>
+    <article class="metric"><div class="metric-icon mi-green">✓</div><div><div class="metric-label">Concluídas</div><strong id="doneCount">0</strong><small>Serviços finalizados</small></div></article>
+  </section>
+
+  <section class="panel" id="formPanel">
+    <div class="panel-head"><div><h3 id="formTitle">Cadastrar Ordem de Serviço</h3><p class="sub">Registre a chegada da peça e as informações iniciais.</p></div><button class="btn btn-light" id="closeFormBtn" aria-label="Fechar formulário">✕</button></div>
+    <form id="orderForm">
+      <input type="hidden" id="orderId">
+      <div class="form-grid">
+        <div class="field"><label for="orderNumber">Número da O.S. *</label><input id="orderNumber" required placeholder="Ex.: OS-2026-001" maxlength="50"></div>
+        <div class="field"><label for="client">Cliente / Setor *</label><input id="client" required placeholder="Nome do cliente ou setor" maxlength="120"></div>
+        <div class="field"><label for="part">Peça / Componente *</label><input id="part" required placeholder="Ex.: eixo, flange, carcaça" maxlength="120"></div>
+        <div class="field"><label for="quantity">Quantidade *</label><input id="quantity" type="number" min="1" step="1" value="1" required></div>
+        <div class="field"><label for="responsible">Responsável</label><input id="responsible" placeholder="Nome do responsável" maxlength="100"></div>
+        <div class="field"><label for="priority">Prioridade</label><select id="priority"><option>Normal</option><option>Alta</option><option>Urgente</option></select></div>
+        <div class="field"><label for="arrivalDate">Data de recebimento *</label><input id="arrivalDate" type="date" required></div>
+        <div class="field"><label for="arrivalTime">Hora de recebimento *</label><input id="arrivalTime" type="time" required></div>
+        <div class="field"><label for="dueDate">Previsão de entrega</label><input id="dueDate" type="date"></div>
+        <div class="field"><label for="stage">Etapa atual</label><select id="stage"></select></div>
+        <div class="field span-all"><label for="notes">Descrição / Observações</label><textarea id="notes" placeholder="Defeito identificado, serviço solicitado, material necessário..."></textarea></div>
+      </div>
+      <div class="form-actions"><button type="button" class="btn btn-light" id="cancelBtn">Cancelar</button><button type="submit" class="btn btn-primary" id="saveBtn">Salvar Ordem de Serviço</button></div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Ordens de Serviço</h3><p class="sub">Pesquise, filtre e acompanhe o andamento das peças.</p></div><span class="tag">CONTROLE OPERACIONAL</span></div>
+    <div class="filters">
+      <div class="filter-field"><label for="search">Pesquisar</label><input type="search" id="search" placeholder="Número da O.S., cliente, peça..."></div>
+      <div class="filter-field"><label for="stageFilter">Etapa</label><select id="stageFilter"><option value="">Todas as etapas</option></select></div>
+      <div class="filter-field"><label for="priorityFilter">Prioridade</label><select id="priorityFilter"><option value="">Todas</option><option>Normal</option><option>Alta</option><option>Urgente</option></select></div>
+      <button class="btn btn-light" id="clearFiltersBtn">Limpar filtros</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Fluxo de Recuperação</h3><p class="sub">Mova cada O.S. para a etapa correspondente. A movimentação fica registrada no histórico.</p></div><span class="tag">KANBAN METALFUND</span></div>
+    <div class="kanban-scroll"><div class="kanban" id="kanban"></div></div>
+    <p class="note">O tempo total é contado desde o recebimento. O prazo vencido é sinalizado quando a previsão de entrega passa e a O.S. ainda não foi concluída ou entregue.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Histórico de movimentações</h3><p class="sub">Registro de recebimento, mudanças de etapa, conclusão e entrega.</p></div><button class="btn btn-light" id="exportBtn">Exportar histórico CSV</button></div>
+    <div class="table-wrap"><table class="history-table"><thead><tr><th>O.S.</th><th>Peça</th><th>Etapa registrada</th><th>Data</th><th>Hora</th><th>Responsável</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+    <p class="note">O histórico é armazenado neste navegador. Para rastreabilidade formal, use um banco de dados compartilhado e controle de acesso em uma versão de produção.</p>
+  </section>
+
+  <footer class="footer"><span>METALFUND | Controle de Ordens de Serviço</span><span>Gestão visual • Rastreabilidade • Eficiência operacional</span></footer>
+</main>
+<div class="toast-area" id="toastArea" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+  const STORAGE_KEY = "metalfund_standalone_v1";
+  const HISTORY_KEY = STORAGE_KEY + "_history";
+  const STAGES = [
+    {key:"Recebimento",label:"01. Recebimento",short:"Recebimento"},
+    {key:"Avaliacao",label:"02. Avaliação técnica",short:"Avaliação técnica"},
+    {key:"Aguardando",label:"03. Aguardando material",short:"Aguardando material"},
+    {key:"Recuperacao",label:"04. Em recuperação",short:"Em recuperação"},
+    {key:"Inspecao",label:"05. Inspeção / Qualidade",short:"Inspeção / Qualidade"},
+    {key:"Concluida",label:"06. Concluídas",short:"Concluída"},
+    {key:"Entregue",label:"07. Entregues",short:"Entregue ao cliente"}
+  ];
+  const $ = id => document.getElementById(id);
+  let orders = readStore(STORAGE_KEY);
+  let history = readStore(HISTORY_KEY);
+  let toastTimer;
+
+  function readStore(key) {
+    try { const v = JSON.parse(localStorage.getItem(key) || "[]"); return Array.isArray(v) ? v : []; }
+    catch(e) { return []; }
+  }
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      return true;
+    } catch(e) { notify("Não foi possível salvar. Verifique o espaço disponível no navegador.", "error"); return false; }
+  }
+  function id() {
+    return (crypto && crypto.randomUUID) ? crypto.randomUUID() : "id-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+  }
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function localDateInput(d = new Date()) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  function localTimeInput(d = new Date()) {
+    return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  }
+  function fmtDate(value) {
+    if (!value) return "—";
+    const p = String(value).split("-");
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : "—";
+  }
+  function fmtDateTime(value) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("pt-BR", {dateStyle:"short",timeStyle:"short"});
+  }
+  function stageLabel(key) { return STAGES.find(s => s.key === key)?.short || key || "—"; }
+  function notify(message, type = "") {
+    const area = $("toastArea"), el = document.createElement("div");
+    el.className = "toast" + (type ? " " + type : "");
+    el.textContent = message; area.appendChild(el);
+    setTimeout(() => el.remove(), 3600);
+  }
+  function populateStages() {
+    $("stage").innerHTML = STAGES.map(s => `<option value="${s.key}">${esc(s.short)}</option>`).join("");
+    $("stageFilter").insertAdjacentHTML("beforeend", STAGES.map(s => `<option value="${s.key}">${esc(s.short)}</option>`).join(""));
+    $("kanban").innerHTML = STAGES.map(s => `<section class="lane" data-stage="${s.key}"><div class="lane-head"><span>${esc(s.label)}</span><b id="count-${s.key}">0</b></div><div class="lane-cards" id="lane-${s.key}"></div></section>`).join("");
+  }
+  function logEvent(order, stage, when = new Date().toISOString(), eventLabel = "") {
+    history.unshift({
+      id:id(), orderId:order.id, number:order.number, part:order.part,
+      stage, eventLabel: eventLabel || stageLabel(stage), when,
+      responsible:order.responsible || "Não informado"
+    });
+    history = history.slice(0, 3000);
+  }
+  function openForm(order = null) {
+    $("orderForm").reset();
+    $("orderId").value = order?.id || "";
+    $("formTitle").textContent = order ? "Editar Ordem de Serviço" : "Cadastrar Ordem de Serviço";
+    $("saveBtn").textContent = order ? "Salvar alterações" : "Salvar Ordem de Serviço";
+    $("orderNumber").readOnly = !!order;
+    if (order) {
+      $("orderNumber").value = order.number;
+      $("client").value = order.client;
+      $("part").value = order.part;
+      $("quantity").value = order.quantity;
+      $("responsible").value = order.responsible || "";
+      $("priority").value = order.priority || "Normal";
+      $("arrivalDate").value = order.arrivalDate;
+      $("arrivalTime").value = order.arrivalTime;
+      $("dueDate").value = order.dueDate || "";
+      $("stage").value = order.stage;
+      $("notes").value = order.notes || "";
+    } else {
+      $("arrivalDate").value = localDateInput();
+      $("arrivalTime").value = localTimeInput();
+      $("quantity").value = 1;
+      $("priority").value = "Normal";
+      $("stage").value = "Recebimento";
+    }
+    $("formPanel").classList.add("open");
+    $("formPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    $("orderNumber").focus();
+  }
+  function closeForm() {
+    $("formPanel").classList.remove("open");
+    $("orderForm").reset();
+    $("orderId").value = "";
+    $("orderNumber").readOnly = false;
+  }
+  $("newOrderBtn").addEventListener("click", () => openForm());
+  $("closeFormBtn").addEventListener("click", closeForm);
+  $("cancelBtn").addEventListener("click", closeForm);
+
+  $("orderForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const editId = $("orderId").value;
+    const number = $("orderNumber").value.trim();
+    const client = $("client").value.trim();
+    const part = $("part").value.trim();
+    const quantity = Number($("quantity").value);
+    const responsible = $("responsible").value.trim();
+    const priority = $("priority").value;
+    const arrivalDate = $("arrivalDate").value;
+    const arrivalTime = $("arrivalTime").value;
+    const dueDate = $("dueDate").value;
+    const stage = $("stage").value;
+    const notes = $("notes").value.trim();
+
+    if (!number || !client || !part || !arrivalDate || !arrivalTime || !Number.isInteger(quantity) || quantity < 1) {
+      notify("Preencha os campos obrigatórios corretamente.", "error"); return;
+    }
+    if (dueDate && dueDate < arrivalDate) {
+      notify("A previsão de entrega não pode ser anterior ao recebimento.", "error"); return;
+    }
+    if (orders.some(o => o.number.toLowerCase() === number.toLowerCase() && o.id !== editId)) {
+      notify("Já existe uma O.S. com esse número.", "error"); return;
+    }
+    const existing = orders.find(o => o.id === editId);
+    const order = {
+      id: editId || id(), number, client, part, quantity, responsible, priority,
+      arrivalDate, arrivalTime, dueDate, stage, notes,
+      createdAt: existing?.createdAt || new Date().toISOString(),
+      lastMovedAt: existing?.lastMovedAt || new Date().toISOString()
+    };
+    const oldOrders = orders.slice(), oldHistory = history.slice();
+    if (existing) {
+      orders = orders.map(o => o.id === editId ? order : o);
+      if (existing.stage !== stage) {
+        order.lastMovedAt = new Date().toISOString();
+        logEvent(order, stage, order.lastMovedAt);
+      }
+    } else {
+      orders.push(order);
+      const arrival = new Date(`${arrivalDate}T${arrivalTime}:00`);
+      const arrivalIso = Number.isNaN(arrival.getTime()) ? order.createdAt : arrival.toISOString();
+      logEvent(order, "Recebimento", arrivalIso, "Recebimento da peça");
+      if (stage !== "Recebimento") logEvent(order, stage, order.createdAt, "Cadastro em: " + stageLabel(stage));
+    }
+    if (!persist()) { orders = oldOrders; history = oldHistory; return; }
+    closeForm(); renderAll();
+    notify(existing ? "O.S. atualizada com sucesso." : "O.S. cadastrada com sucesso.");
+  });
+
+  function elapsed(order) {
+    const start = new Date(`${order.arrivalDate}T${order.arrivalTime}:00`);
+    if (Number.isNaN(start.getTime())) return "Indisponível";
+    let mins = Math.max(0, Math.floor((Date.now() - start.getTime()) / 60000));
+    const days = Math.floor(mins / 1440); mins %= 1440;
+    const hours = Math.floor(mins / 60); mins %= 60;
+    return days ? `${days}d ${hours}h ${mins}min` : hours ? `${hours}h ${mins}min` : `${mins}min`;
+  }
+  function overdue(order) {
+    return !!order.dueDate && order.dueDate < localDateInput() && !["Concluida","Entregue"].includes(order.stage);
+  }
+  function filteredOrders() {
+    const q = $("search").value.trim().toLocaleLowerCase("pt-BR");
+    const st = $("stageFilter").value, pr = $("priorityFilter").value;
+    return orders.filter(o => {
+      const hay = [o.number,o.client,o.part,o.responsible].join(" ").toLocaleLowerCase("pt-BR");
+      return (!q || hay.includes(q)) && (!st || o.stage === st) && (!pr || o.priority === pr);
+    });
+  }
+  function card(order) {
+    const priority = ["Normal","Alta","Urgente"].includes(order.priority) ? order.priority : "Normal";
+    const stageOptions = STAGES.map(s => `<option value="${s.key}" ${order.stage === s.key ? "selected" : ""}>${esc(s.short)}</option>`).join("");
+    return `<article class="os-card priority-${priority}">
+      <div class="card-top"><span class="os-number">${esc(order.number)}</span><span class="priority-badge priority-${priority}">${esc(priority)}</span></div>
+      <h4>${esc(order.part)}</h4><div class="client">${esc(order.client)}</div>
+      <div class="card-info">
+        <span><strong>Quantidade:</strong> ${esc(order.quantity)}</span>
+        <span><strong>Recebimento:</strong> ${fmtDate(order.arrivalDate)} às ${esc(order.arrivalTime)}</span>
+        <span><strong>Tempo total:</strong> ${elapsed(order)}</span>
+        <span><strong>Responsável:</strong> ${esc(order.responsible || "Não informado")}</span>
+        ${order.dueDate ? `<span><strong>Previsão:</strong> ${fmtDate(order.dueDate)}</span>` : ""}
+        ${overdue(order) ? '<span class="overdue">PRAZO VENCIDO</span>' : ""}
+        ${order.notes ? `<span><strong>Obs.:</strong> ${esc(order.notes)}</span>` : ""}
+      </div>
+      <div class="card-actions"><button type="button" data-action="edit" data-id="${esc(order.id)}">Editar</button><button type="button" class="delete" data-action="delete" data-id="${esc(order.id)}">Excluir</button></div>
+      <div class="stage-move"><label for="move-${esc(order.id)}">Mover para outra etapa</label><select id="move-${esc(order.id)}" data-action="move" data-id="${esc(order.id)}">${stageOptions}</select></div>
+    </article>`;
+  }
+  function renderKanban() {
+    const list = filteredOrders();
+    STAGES.forEach(s => {
+      const lane = $("lane-" + s.key);
+      const matching = list.filter(o => o.stage === s.key).sort((a,b) => {
+        const rank = {Urgente:0,Alta:1,Normal:2}; return (rank[a.priority] ?? 2) - (rank[b.priority] ?? 2);
+      });
+      lane.innerHTML = matching.length ? matching.map(card).join("") : '<div class="empty">Nenhuma O.S. nesta etapa</div>';
+      $("count-" + s.key).textContent = matching.length;
+    });
+  }
+  function renderMetrics() {
+    $("openCount").textContent = orders.filter(o => !["Concluida","Entregue"].includes(o.stage)).length;
+    $("repairCount").textContent = orders.filter(o => o.stage === "Recuperacao").length;
+    $("evaluationCount").textContent = orders.filter(o => o.stage === "Avaliacao").length;
+    $("doneCount").textContent = orders.filter(o => o.stage === "Concluida").length;
+  }
+  function renderHistory() {
+    const q = $("search").value.trim().toLocaleLowerCase("pt-BR");
+    const currentIds = new Set(orders.map(o => o.id));
+    const list = history.filter(h => currentIds.has(h.orderId) && (!q || [h.number,h.part,h.responsible,orders.find(o=>o.id===h.orderId)?.client].join(" ").toLocaleLowerCase("pt-BR").includes(q))).slice(0,150);
+    $("historyBody").innerHTML = list.length ? list.map(h => {
+      const d = new Date(h.when);
+      return `<tr><td><strong>${esc(h.number)}</strong></td><td>${esc(h.part)}</td><td>${esc(h.eventLabel || stageLabel(h.stage))}</td><td>${Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("pt-BR")}</td><td>${Number.isNaN(d.getTime()) ? "—" : d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</td><td>${esc(h.responsible)}</td></tr>`;
+    }).join("") : '<tr><td colspan="6" class="empty-cell">Nenhuma movimentação encontrada.</td></tr>';
+  }
+  function updateDate() {
+    $("currentDate").textContent = new Date().toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"});
+  }
+  function renderAll() { renderMetrics(); renderKanban(); renderHistory(); updateDate(); }
+
+  function moveOrder(orderId, newStage) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order || order.stage === newStage) return;
+    const oldStage = order.stage, oldMoved = order.lastMovedAt, oldHistory = history.slice();
+    order.stage = newStage; order.lastMovedAt = new Date().toISOString();
+    logEvent(order, newStage, order.lastMovedAt, "Movimentação: " + stageLabel(newStage));
+    if (!persist()) { order.stage = oldStage; order.lastMovedAt = oldMoved; history = oldHistory; return; }
+    renderAll(); notify(`${order.number} movida para ${stageLabel(newStage)}.`);
+  }
+  function deleteOrder(orderId) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    if (!confirm(`Excluir a O.S. ${order.number}?\n\nO histórico associado também será removido deste navegador.`)) return;
+    const oldOrders = orders.slice(), oldHistory = history.slice();
+    orders = orders.filter(o => o.id !== orderId);
+    history = history.filter(h => h.orderId !== orderId);
+    if (!persist()) { orders = oldOrders; history = oldHistory; return; }
+    renderAll(); notify("Ordem de Serviço excluída.");
+  }
+  document.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const order = orders.find(o => o.id === btn.dataset.id);
+    if (btn.dataset.action === "edit" && order) openForm(order);
+    if (btn.dataset.action === "delete") deleteOrder(btn.dataset.id);
+  });
+  document.addEventListener("change", e => {
+    const sel = e.target.closest('select[data-action="move"]');
+    if (sel) moveOrder(sel.dataset.id, sel.value);
+  });
+  ["search","stageFilter","priorityFilter"].forEach(id => $(id).addEventListener(id === "search" ? "input" : "change", renderAll));
+  $("clearFiltersBtn").addEventListener("click", () => { $("search").value = ""; $("stageFilter").value = ""; $("priorityFilter").value = ""; renderAll(); });
+  $("exportBtn").addEventListener("click", () => {
+    const rows = [["OS","Peca","Etapa","Data","Hora","Responsavel"]];
+    history.filter(h => orders.some(o => o.id === h.orderId)).forEach(h => {
+      const d = new Date(h.when);
+      rows.push([h.number,h.part,h.eventLabel || stageLabel(h.stage),Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString("pt-BR"),Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString("pt-BR"),h.responsible]);
+    });
+    const csv = "\uFEFF" + rows.map(row => row.map(v => '"' + String(v ?? "").replace(/"/g,'""') + '"').join(";")).join("\r\n");
+    const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = "historico_metalfund.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    notify("Arquivo CSV exportado.");
+  });
+  populateStages();
+  renderAll();
+  // Atualiza o tempo total exibido nos cartões a cada minuto.
+  setInterval(renderKanban, 60000);
+})();
+</script>
+</body>
+</html>
